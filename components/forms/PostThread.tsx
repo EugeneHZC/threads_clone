@@ -9,6 +9,7 @@ import { z } from "zod";
 import { Button } from "../ui/button";
 import { usePathname, useRouter } from "next/navigation";
 import { createThread } from "@/lib/actions/thread.actions";
+import { useOrganization } from "@clerk/nextjs";
 
 const PostThread = ({ userId }: { userId: string }) => {
   const form = useForm({
@@ -21,9 +22,15 @@ const PostThread = ({ userId }: { userId: string }) => {
 
   const router = useRouter();
   const pathname = usePathname();
+  const { organization } = useOrganization();
 
   async function onSubmit(values: z.infer<typeof ThreadValidation>) {
-    await createThread({ text: values.thread, author: userId, communityId: null, path: pathname });
+    await createThread({
+      text: values.thread,
+      author: userId,
+      communityId: organization ? organization.id : null,
+      path: pathname,
+    });
 
     router.push("/");
   }
