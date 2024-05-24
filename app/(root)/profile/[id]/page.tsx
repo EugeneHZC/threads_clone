@@ -1,4 +1,3 @@
-import PostThread from "@/components/forms/PostThread";
 import ProfileHeader from "@/components/shared/ProfileHeader";
 import ThreadsTab from "@/components/shared/ThreadsTab";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -17,7 +16,7 @@ const Profile = async ({ params }: { params: { id: string } }) => {
 
   return (
     <section>
-      <ProfileHeader userInfo={userInfo} authUserId={user.id} />
+      <ProfileHeader info={userInfo} authUserId={user.id} />
 
       <div className="mt-9">
         <Tabs defaultValue="threads" className="w-full">

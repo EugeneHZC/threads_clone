@@ -100,22 +100,21 @@ const ThreadCard = ({ currentUserId, post, isComment, author }: Props) => {
         {/* TODO: delete thread */}
 
         {/* TODO: show comment logos */}
-
-        {!isComment && post.community && (
-          <Link href={`/communities/${post.community.id}`} className="mt-5 flex items-center">
-            <p className="text-subtle-medium text-gray-1">
-              {formatDateString(post.createdAt)} - {post.community.name} Community
-              <Image
-                src={post.community.image}
-                alt={post.community.name}
-                width={14}
-                height={14}
-                className="ml-1 rounded-full object-cover"
-              />
-            </p>
-          </Link>
-        )}
       </div>
+      {!isComment && post.community && (
+        <Link href={`/communities/${post.community.id}`} className="mt-5 flex items-center">
+          <p className="text-subtle-medium text-gray-1">
+            {formatDateString(post.createdAt)} - {post.community.name} Community
+          </p>
+          <Image
+            src={post.community.image}
+            alt={post.community.name}
+            width={14}
+            height={14}
+            className="ml-1 rounded-full object-cover"
+          />
+        </Link>
+      )}
     </article>
   );
 };
