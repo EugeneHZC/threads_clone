@@ -19,7 +19,16 @@ const ThreadDetails = async ({ params }: { params: { id: string } }) => {
   return (
     <section className="relative">
       <div>
-        <ThreadCard key={thread._id} currentUserId={user?.id || ""} post={thread} author={thread.author} />
+        <ThreadCard
+          id={thread._id}
+          currentUserId={user.id}
+          parentId={thread.parentId}
+          content={thread.text}
+          author={thread.author}
+          community={thread.community}
+          createdAt={thread.createdAt}
+          comments={thread.children}
+        />
       </div>
 
       <div className="mt-7">
@@ -30,10 +39,15 @@ const ThreadDetails = async ({ params }: { params: { id: string } }) => {
         {thread.children.map((child: any) => (
           <ThreadCard
             key={child._id}
-            currentUserId={user?.id || ""}
-            post={child}
-            isComment={true}
+            id={child._id}
+            currentUserId={user.id}
+            parentId={child.parentId}
+            content={child.text}
             author={child.author}
+            community={child.community}
+            createdAt={child.createdAt}
+            comments={child.children}
+            isComment
           />
         ))}
       </div>

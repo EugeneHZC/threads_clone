@@ -31,8 +31,6 @@ const ProfileHeader = ({ info, authUserId, type }: Props) => {
         </div>
       </div>
 
-      {/* TODO: Community */}
-
       <p className="mt-6 max-w-lg text-base-regular text-light-2">{info.bio}</p>
 
       <div className="mt-12 h-0.5 w-full bg-dark-3" />

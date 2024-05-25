@@ -1,8 +1,9 @@
 import ProfileHeader from "@/components/shared/ProfileHeader";
+import RepliesTab from "@/components/shared/RepliesTab";
 import ThreadsTab from "@/components/shared/ThreadsTab";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { profileTabs } from "@/constants";
-import { fetchUser } from "@/lib/actions/user.actions";
+import { fetchUser, getActivity } from "@/lib/actions/user.actions";
 import { currentUser } from "@clerk/nextjs/server";
 import Image from "next/image";
 import { redirect } from "next/navigation";
@@ -13,6 +14,8 @@ const Profile = async ({ params }: { params: { id: string } }) => {
 
   const userInfo = await fetchUser(params.id);
   if (!userInfo?.onboarded) redirect("/onboarding");
+
+  const activities = await getActivity(userInfo._id);
 
   return (
     <section>
@@ -31,13 +34,23 @@ const Profile = async ({ params }: { params: { id: string } }) => {
                     {userInfo?.threads?.length}
                   </p>
                 )}
+
+                {tab.label === "Replies" && (
+                  <p className="ml-1 rounded-sm bg-light-4 px-2 py-1 !text-tiny-medium text-light-2">
+                    {activities.length}
+                  </p>
+                )}
               </TabsTrigger>
             ))}
           </TabsList>
 
           {profileTabs.map((tab) => (
             <TabsContent key={`content-${tab.label}`} value={tab.value} className="w-full text-light-1">
-              <ThreadsTab currentUserId={user.id} accountId={userInfo.id} accountType="User" />
+              {tab.label === "Threads" && <ThreadsTab accountId={userInfo.id} accountType="User" />}
+
+              {tab.label === "Replies" && <RepliesTab />}
+
+              {tab.label === "Tagged" && <ThreadsTab accountId={userInfo.id} accountType="User" />}
             </TabsContent>
           ))}
         </Tabs>

@@ -1,40 +1,43 @@
 import { formatDateString } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
+import DeleteThread from "../shared/DeleteThread";
 
 interface Props {
+  id: string;
   currentUserId: string;
-  post: {
-    _id: string;
-    text: string;
-    author: {
-      name: string;
-      image: string;
-      id: string;
-    };
-    community: {
-      id: string;
-      name: string;
-      image: string;
-    } | null;
-    createdAt: string;
-    parentId: string | null;
-    children: {
-      author: {
-        image: string;
-      };
-    }[];
-    isLiked: boolean;
-  };
-  isComment?: boolean;
+  parentId: string | null;
+  content: string;
   author: {
     name: string;
     image: string;
     id: string;
   };
+  community: {
+    id: string;
+    name: string;
+    image: string;
+  } | null;
+  createdAt: string;
+  comments: {
+    author: {
+      image: string;
+    };
+  }[];
+  isComment?: boolean;
 }
 
-const ThreadCard = ({ currentUserId, post, isComment, author }: Props) => {
+const ThreadCard = ({
+  id,
+  currentUserId,
+  parentId,
+  content,
+  author,
+  community,
+  createdAt,
+  comments,
+  isComment,
+}: Props) => {
   return (
     <article className={`flex w-full flex-col rounded-xl  ${isComment ? "px-0 xs:px-7" : "bg-dark-2 p-7"}`}>
       <div className="flex items-start justify-between">
@@ -48,11 +51,11 @@ const ThreadCard = ({ currentUserId, post, isComment, author }: Props) => {
           </div>
 
           <div className="flex w-full flex-col">
-            <Link href={`/profile/${post.author.id}`} className="w-fit">
-              <h4 className="cursor-pointer text-base-semibold text-light-1">{post.author.name}</h4>
+            <Link href={`/profile/${author.id}`} className="w-fit">
+              <h4 className="cursor-pointer text-base-semibold text-light-1">{author.name}</h4>
             </Link>
 
-            <p className="mt-2 text-small-regular text-light-2">{post.text}</p>
+            <p className="mt-2 text-small-regular text-light-2">{content}</p>
 
             <div className={`mt-5 flex flex-col gap-3 ${isComment && "mb-10"}`}>
               <div className="flex gap-3.5">
@@ -63,7 +66,7 @@ const ThreadCard = ({ currentUserId, post, isComment, author }: Props) => {
                   height={24}
                   className="cursor-pointer object-contain"
                 />
-                <Link href={`/thread/${post._id}`}>
+                <Link href={`/thread/${id}`}>
                   <Image
                     src="/assets/reply.svg"
                     alt="reply"
@@ -86,29 +89,42 @@ const ThreadCard = ({ currentUserId, post, isComment, author }: Props) => {
                   height={24}
                   className="cursor-pointer object-contain"
                 />
+
+                {currentUserId === author.id && <DeleteThread threadId={JSON.stringify(id)} />}
               </div>
 
-              {isComment && post.children.length > 0 && (
-                <Link href={`/thread/${post._id}`}>
-                  <p className="mt-1 text-subtle-medium text-gray-1">{post.children.length} replies</p>
-                </Link>
+              {!isComment && comments.length > 0 && (
+                <div className="mt-1 flex items-center gap-2">
+                  {comments.map((comment, index) => (
+                    <Image
+                      key={index}
+                      src={comment.author.image}
+                      alt={`user_${index}`}
+                      width={24}
+                      height={24}
+                      className={`${index !== 0 && "-ml-5"} rounded-full object-cover`}
+                    />
+                  ))}
+
+                  <Link href={`/thread/${id}`}>
+                    <p className="mt-1 text-subtle-medium text-gray-1">
+                      {comments.length} repl{comments.length === 1 ? "y" : "ies"}
+                    </p>
+                  </Link>
+                </div>
               )}
             </div>
           </div>
         </div>
-
-        {/* TODO: delete thread */}
-
-        {/* TODO: show comment logos */}
       </div>
-      {!isComment && post.community && (
-        <Link href={`/communities/${post.community.id}`} className="mt-5 flex items-center">
+      {!isComment && community && (
+        <Link href={`/communities/${community.id}`} className="mt-5 flex items-center">
           <p className="text-subtle-medium text-gray-1">
-            {formatDateString(post.createdAt)} - {post.community.name} Community
+            {formatDateString(createdAt)} - {community.name} Community
           </p>
           <Image
-            src={post.community.image}
-            alt={post.community.name}
+            src={community.image}
+            alt={community.name}
             width={14}
             height={14}
             className="ml-1 rounded-full object-cover"

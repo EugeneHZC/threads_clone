@@ -22,18 +22,35 @@ const ThreadsTab = async ({ currentUserId, accountId, accountType }: Props) => {
 
   return (
     <section className="mt-9 flex flex-col gap-10">
-      {response.threads.map((thread: any) => (
-        <ThreadCard
-          key={thread._id}
-          currentUserId={currentUserId}
-          post={thread}
-          author={
-            accountType === "User"
-              ? { name: response.name, image: response.image, id: response.id }
-              : { name: thread.author.name, image: thread.author.image, id: thread.author.id }
-          }
-        />
-      ))}
+      {response.threads.length > 0 ? (
+        response.threads.map((thread: any) => (
+          <ThreadCard
+            key={thread._id}
+            id={thread._id}
+            currentUserId={currentUserId}
+            parentId={thread.parentId}
+            content={thread.text}
+            author={
+              accountType === "User"
+                ? { name: response.name, image: response.image, id: response.id }
+                : {
+                    name: thread.author.name,
+                    image: thread.author.image,
+                    id: thread.author.id,
+                  }
+            }
+            community={
+              accountType === "Community"
+                ? { name: response.name, id: response.id, image: response.image }
+                : thread.community
+            }
+            createdAt={thread.createdAt}
+            comments={thread.children}
+          />
+        ))
+      ) : (
+        <p className="no-result">No threads found</p>
+      )}
     </section>
   );
 };

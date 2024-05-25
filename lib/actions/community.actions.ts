@@ -224,12 +224,18 @@ export async function removeUserFromCommunity(userId: string, communityId: strin
   }
 }
 
-export async function updateCommunityInfo(communityId: string, name: string, username: string, image: string) {
+export async function updateCommunityInfo(
+  communityId: string,
+  name: string,
+  username: string,
+  image: string,
+  bio: string
+) {
   try {
     connectToDB();
 
     // Find the community by its _id and update the information
-    const updatedCommunity = await Community.findOneAndUpdate({ id: communityId }, { name, username, image });
+    const updatedCommunity = await Community.findOneAndUpdate({ id: communityId }, { name, username, image, bio });
 
     if (!updatedCommunity) {
       throw new Error("Community not found");
